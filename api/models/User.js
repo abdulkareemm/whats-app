@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
+const bcrypt = require("bcryptjs");
 
 const UserSchema = mongoose.Schema(
   {
@@ -16,12 +17,11 @@ const UserSchema = mongoose.Schema(
     },
     picture: {
       type: String,
-      default:
-        "https://thumbs.dreamstime.com/b/default-avatar-profile-image-vector-social-media-user-icon-potrait-182347582.jpg",
+      required: true,
     },
     status: {
       type: String,
-      default: "Hey there ! I am using whatsapp",
+      required: true,
     },
     password: {
       type: String,
@@ -30,6 +30,18 @@ const UserSchema = mongoose.Schema(
   },
   { timestamps: true, collection: "users" }
 );
+UserSchema.pre("save", async function (next) {
+  try {
+    if (this.isNew) {
+      const salt = await bcrypt.genSalt(12);
+      const hashPassword = await bcrypt.hash(this.password, salt);
+      this.password = hashPassword;
+    }
+    next();
+  } catch (err) {
+    next(err);
+  }
+});
 
 const UserModel =
   mongoose.models.UserModel || mongoose.model("UserModel", UserSchema);
