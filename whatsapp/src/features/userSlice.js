@@ -17,7 +17,9 @@ export const userSlice = createSlice({
   initialState,
   reducers: {
     logout: (state) => {
-      return initialState;
+      state.user = initialState.user;
+      state.error = "";
+      state.status = "";
     },
   },
 });
