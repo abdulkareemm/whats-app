@@ -17,7 +17,14 @@ export const userSlice = createSlice({
   initialState,
   reducers: {
     logout: (state) => {
-      state.user = initialState.user;
+      state.user = {
+        id: "",
+        name: "",
+        email: "",
+        picture: "",
+        status: "",
+        token: "",
+      };
       state.error = "";
       state.status = "";
     },
