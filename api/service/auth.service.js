@@ -1,13 +1,10 @@
 const createHttpError = require("http-errors");
 const validator = require("validator");
 const { UserModel } = require("../models/index.js");
-const {
-  DEFAULT_IMAGE,
-  DEFAULT_STATUS,
-} = process.env;
 
 exports.createUser = async (userData) => {
-  const { name, email, password, picture,status } = userData;
+  const { DEFAULT_IMAGE, DEFAULT_STATUS } = process.env;
+  const { name, email, password, picture, status } = userData;
 
   //  check if fields are empty
   if (!name || !email || !password) {
@@ -50,9 +47,8 @@ exports.createUser = async (userData) => {
     name,
     email,
     password,
-    picture:
-      picture||DEFAULT_IMAGE,
-    status:status|| DEFAULT_STATUS
+    picture: picture || DEFAULT_IMAGE,
+    status: status || DEFAULT_STATUS,
   }).save();
 
   return user;

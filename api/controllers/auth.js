@@ -3,15 +3,11 @@ const { createUser } = require("../service/auth.service");
 const { generateToken } = require("../service/token.service");
 
 
-const {
-  ACCESS_TOKEN_SECRET,
-  REFRESH_TOKEN_SECRET,
-  DEFAULT_IMAGE,
-  DEFAULT_STATUS,
-} = process.env;
+
 
 exports.register = async (req, res, next) => {
   try {
+    const { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } = process.env;
     const newUser = await createUser(req.body);
 
     const access_token = await generateToken(
