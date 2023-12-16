@@ -69,3 +69,42 @@ exports.signUser = async (userData) => {
 
   return user;
 };
+exports.logout = async (req, res, next) => {
+  try {
+    res.clearCookie("refreshtoken", { path: "/api/v1/auth/refresh_token" });
+    res.json({
+      msg: "logged out !",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+exports.refreshToken = async (req, res, next) => {
+  try {
+    const refresh_token = req.cookies.refreshtoken;
+    if (!refresh_token) throw createHttpError.Unauthorized("Please login.");
+    const check = await verifyToken(
+      refresh_token,
+      process.env.REFRESH_TOKEN_SECRET
+    );
+    const user = await findUser(check.userId);
+    const access_token = await generateToken(
+      { userId: user._id },
+      "1d",
+      process.env.ACCESS_TOKEN_SECRET
+    );
+    res.json({
+      msg: "register success",
+      user: {
+        _id: user._id,
+        name: user.name,
+        status: user.status,
+        picture: user.picture,
+        email: user.email,
+        token: access_token,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
