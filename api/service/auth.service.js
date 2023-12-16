@@ -1,5 +1,7 @@
 const createHttpError = require("http-errors");
 const validator = require("validator");
+const bcrypt = require("bcryptjs");
+
 const { UserModel } = require("../models/index.js");
 
 exports.createUser = async (userData) => {
@@ -50,6 +52,20 @@ exports.createUser = async (userData) => {
     picture: picture || DEFAULT_IMAGE,
     status: status || DEFAULT_STATUS,
   }).save();
+
+  return user;
+};
+exports.signUser = async (userData) => {
+  const { email, password } = userData;
+  const user = await UserModel.findOne({ email: email.toLowerCase() });
+  //  check if acount not exist
+  if (!user) {
+    throw createHttpError.NotFound("Invalid credentails.");
+  }
+
+  //    compare password
+  let passwordMatches = await bcrypt.compare(password, user.password);
+  if (!passwordMatches) throw createHttpError.NotFound("Invalid credentails.");
 
   return user;
 };
