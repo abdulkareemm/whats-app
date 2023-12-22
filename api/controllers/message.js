@@ -30,3 +30,16 @@ exports.sendMessage = async (req, res, next) => {
     next(err);
   }
 };
+exports.getMessage = async (req, res, next) => {
+  try {
+    const { convo_id } = req.params;
+    if (!convo_id) {
+      logger.error("Please add a conversation id in params.");
+      return res.sendStatus(400);
+    }
+    const messages = await getConvoMessages(convo_id);
+    res.json(messages);
+  } catch (error) {
+    next(error);
+  }
+};
